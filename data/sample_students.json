@@ -1,0 +1,34 @@
+[
+  {
+    "id": "2025001",
+    "name": "张三",
+    "gender": "男",
+    "age": 19,
+    "college": "计算机学院",
+    "classnum": "2025级1班",
+    "plcstatus": "团员",
+    "phone": "13800000001",
+    "province": "江苏",
+    "parphone": "13800000011",
+    "courses": [
+      {"name": "高等数学", "credit": 4, "score": 88},
+      {"name": "C++程序设计", "credit": 3, "score": 92}
+    ]
+  },
+  {
+    "id": "2025002",
+    "name": "李四",
+    "gender": "女",
+    "age": 18,
+    "college": "自动化学院",
+    "classnum": "2025级2班",
+    "plcstatus": "群众",
+    "phone": "13800000002",
+    "province": "浙江",
+    "parphone": "13800000012",
+    "courses": [
+      {"name": "线性代数", "credit": 3, "score": 85},
+      {"name": "电子技术基础", "credit": 2, "score": 78}
+    ]
+  }
+]

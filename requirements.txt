@@ -1,0 +1,4 @@
+openpyxl>=3.0.0
+
+# Optional (not required for the current stdlib server implementation):
+# Flask==2.3.0Flask>=2.0

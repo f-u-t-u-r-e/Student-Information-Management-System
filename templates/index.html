@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>学生管理平台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body class="p-3">
+    <div class="container">
+  <h1 class="text-center">学生信息管理系统</h1>
+
+      <div class="row">
+        <div class="col-md-6">
+          <h4>添加学生</h4>
+          <form id="addStudentForm">
+            <div class="mb-2"><input class="form-control" name="id" placeholder="学号" required></div>
+            <div class="mb-2"><input class="form-control" name="name" placeholder="姓名"></div>
+            <div class="mb-2"><input class="form-control" name="gender" placeholder="性别"></div>
+            <div class="mb-2"><input class="form-control" name="age" placeholder="年龄" type="number"></div>
+            <div class="mb-2"><input class="form-control" name="college" placeholder="学院"></div>
+            <div class="mb-2"><input class="form-control" name="classnum" placeholder="班级"></div>
+            <div class="mb-2"><input class="form-control" name="plcstatus" placeholder="政治面貌"></div>
+            <div class="mb-2"><input class="form-control" name="phone" placeholder="电话"></div>
+            <div class="mb-2"><input class="form-control" name="province" placeholder="生源省份"></div>
+            <div class="mb-2"><input class="form-control" name="parphone" placeholder="家长电话"></div>
+            <button class="btn btn-primary">添加</button>
+          </form>
+        </div>
+
+        <div class="col-md-6">
+          <h4>录入成绩</h4>
+          <form id="addScoreForm">
+            <div class="mb-2"><input class="form-control" name="id" placeholder="学号" required></div>
+            <div class="mb-2"><input class="form-control" name="name" placeholder="课程名" required></div>
+            <div class="mb-2"><input class="form-control" name="credit" placeholder="学分" type="number" step="0.1"></div>
+            <div class="mb-2"><input class="form-control" name="score" placeholder="成绩" type="number" step="0.1"></div>
+            <button class="btn btn-success">提交成绩</button>
+          </form>
+        </div>
+      </div>
+
+      <hr>
+      <h4>学生列表</h4>
+      <div class="mb-2">
+        <button id="refreshBtn" class="btn btn-secondary btn-sm">刷新</button>
+        <!-- CSV exports (兼容 Excel 打开) -->
+        <a class="btn btn-outline-secondary btn-sm" href="/api/export">导出 students.csv</a>
+        <a class="btn btn-outline-secondary btn-sm" href="/api/export_scores">导出 scores.csv</a>
+  <!-- Excel .xlsx exports (真实 Excel 文件) - 已移除页面上的直接下载按钮，保留下方“导出并保存”功能 -->
+        <a class="btn btn-outline-primary btn-sm" id="rankBtn">查看排名</a>
+      </div>
+      <table class="table table-sm" id="studentsTable">
+        <thead><tr><th>学号</th><th>姓名</th><th>学院</th><th>班级</th><th>GPA</th><th>操作</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+      <hr>
+      <h4>导出与历史</h4>
+      <div class="mb-2">
+        <button id="exportSaveStudents" class="btn btn-success btn-sm">导出并保存 students.xlsx</button>
+        <button id="exportSaveScores" class="btn btn-success btn-sm">导出并保存 scores.xlsx</button>
+      </div>
+      <h5>导出历史</h5>
+      <table class="table table-sm" id="exportsTable">
+        <thead><tr><th>文件名</th><th>时间</th><th>操作</th></tr></thead>
+        <tbody></tbody>
+      </table>
+
+    </div>
+
+    <script>
+    async function fetchList(){
+      const res = await fetch('/api/students');
+      const data = await res.json();
+      const tbody = document.querySelector('#studentsTable tbody');
+      tbody.innerHTML = '';
+      data.forEach(s=>{
+        const gpa = s.gpa===null? '未录入': (Math.round(s.gpa*100)/100);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${s.id}</td><td>${s.name||''}</td><td>${s.college||''}</td><td>${s.classnum||''}</td><td>${gpa}</td><td><button class='btn btn-sm btn-danger' data-id='${s.id}'>删除</button></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', fetchList);
+
+    document.getElementById('addStudentForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const form = e.target; const obj = Object.fromEntries(new FormData(form));
+      if(obj.age) obj.age = parseInt(obj.age);
+      const res = await fetch('/api/students', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(obj)});
+      if(res.ok){ form.reset(); fetchList(); alert('添加成功'); } else { const j=await res.json(); alert(j.error||'失败'); }
+    });
+
+    document.getElementById('addScoreForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const form = e.target; const obj = Object.fromEntries(new FormData(form));
+      obj.credit = parseFloat(obj.credit||0); obj.score = parseFloat(obj.score||0);
+  const id = obj.id; delete obj.id;
+  const res = await fetch(`/api/students/${encodeURIComponent(id)}/scores`, {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(obj)});
+      if(res.ok){ form.reset(); fetchList(); alert('成绩已录入'); } else { const j=await res.json(); alert(j.error||'失败'); }
+    });
+
+    document.querySelector('#studentsTable tbody').addEventListener('click', async (e)=>{
+      if(e.target.tagName==='BUTTON' && e.target.dataset.id){
+        if(confirm('确认删除学生 '+e.target.dataset.id+' ?')){
+          const res = await fetch('/api/students/'+encodeURIComponent(e.target.dataset.id), {method:'DELETE'});
+          if(res.ok){ fetchList(); alert('已删除'); } else { alert('删除失败'); }
+        }
+      }
+    });
+
+    document.getElementById('rankBtn').addEventListener('click', async ()=>{
+      const res = await fetch('/api/rank'); const data = await res.json();
+      let s = '排名:\n'; data.forEach(r=> s+= `${r.rank}. ${r.id} ${r.name} GPA:${r.gpa===null?'未录入':Math.round(r.gpa*100)/100}\n`);
+      alert(s);
+    });
+
+    // export history
+    async function loadExports(){
+      const res = await fetch('/api/exports');
+      const j = await res.json();
+      const tbody = document.querySelector('#exportsTable tbody');
+      tbody.innerHTML = '';
+      (j.files||[]).forEach(f=>{
+        const tr = document.createElement('tr');
+        const date = f.mtime ? new Date(f.mtime*1000).toLocaleString() : '';
+        // change delete label to "清除" to indicate only history removal (file kept)
+        tr.innerHTML = `<td>${f.name}</td><td>${date}</td><td><a class='btn btn-sm btn-primary' href='${f.url}'>下载</a> <button data-name='${f.name}' class='btn btn-sm btn-warning del-export'>清除</button></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.querySelector('#exportsTable tbody').addEventListener('click', async (e)=>{
+      if(e.target.classList.contains('del-export')){
+        const name = e.target.dataset.name;
+        if(!confirm('确认清除该条历史记录（文件将保留）吗？')) return;
+        const res = await fetch('/api/exports/'+encodeURIComponent(name), {method:'DELETE'});
+        const j = await res.json();
+        if(j.ok) { alert('已清除历史记录'); loadExports(); } else { alert(j.error||'清除失败'); }
+      }
+    });
+
+    document.getElementById('exportSaveStudents').addEventListener('click', async ()=>{
+      const btn = document.getElementById('exportSaveStudents'); btn.disabled = true; btn.textContent='导出中...';
+      const res = await fetch('/api/export_xlsx_save');
+      const j = await res.json();
+      btn.disabled = false; btn.textContent='导出并保存 students.xlsx';
+      if(j.ok){ alert('导出成功: '+j.name); loadExports(); window.open(j.url,'_blank'); } else { alert(j.error||'导出失败'); }
+    });
+
+    document.getElementById('exportSaveScores').addEventListener('click', async ()=>{
+      const btn = document.getElementById('exportSaveScores'); btn.disabled = true; btn.textContent='导出中...';
+      const res = await fetch('/api/export_scores_xlsx_save');
+      const j = await res.json();
+      btn.disabled = false; btn.textContent='导出并保存 scores.xlsx';
+      if(j.ok){ alert('导出成功: '+j.name); loadExports(); window.open(j.url,'_blank'); } else { alert(j.error||'导出失败'); }
+    });
+
+    // initial
+    fetchList();
+    loadExports();
+    </script>
+  </body>
+</html>

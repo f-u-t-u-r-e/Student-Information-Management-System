@@ -30,12 +30,7 @@ jobs:
         shell: pwsh
         run: |
           if (Test-Path 'icon.png') {
-            python -c 'from PIL import Image; import sys; src="icon.png"; dst="app.ico";\
-try:\
-    img=Image.open(src).convert("RGBA"); sizes=[(16,16),(24,24),(32,32),(48,48),(64,64),(128,128),(256,256)];\
-    imgs=[img.resize(s, Image.LANCZOS) for s in sizes]; imgs[0].save(dst, format="ICO", sizes=sizes)\
-except Exception as e:\
-    sys.stderr.write(str(e))'
+            python -c "from PIL import Image; src='icon.png'; dst='app.ico'; img=Image.open(src).convert('RGBA'); sizes=[(16,16),(24,24),(32,32),(48,48),(64,64),(128,128),(256,256)]; imgs=[img.resize(s, Image.LANCZOS) for s in sizes]; imgs[0].save(dst, format='ICO', sizes=sizes)"
           }
 
       - name: Build EXE

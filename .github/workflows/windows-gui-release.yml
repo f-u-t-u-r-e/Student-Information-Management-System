@@ -1,0 +1,57 @@
+name: build-and-release-gui
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install PySide6 openpyxl pyinstaller pillow
+
+      - name: Prepare icon (optional)
+        shell: pwsh
+        run: |
+          if (Test-Path 'icon.png') {
+            python - << 'PY'
+from PIL import Image; import sys
+src='icon.png'; dst='app.ico'
+try:
+    img=Image.open(src).convert('RGBA')
+    sizes=[(16,16),(24,24),(32,32),(48,48),(64,64),(128,128),(256,256)]
+    imgs=[img.resize(s, Image.LANCZOS) for s in sizes]
+    imgs[0].save(dst, format='ICO', sizes=sizes)
+except Exception as e:
+    sys.stderr.write(str(e))
+PY
+          }
+
+      - name: Build EXE
+        id: build
+        shell: pwsh
+        run: |
+          $AppName = "学生信息管理系统GUI"
+          $iconArg = ""
+          if (Test-Path 'app.ico') { $iconArg = "--icon app.ico" }
+          python -m PyInstaller --noconfirm --onefile --clean $iconArg --hidden-import openpyxl --name "$AppName" desktop_app/gui_main.py
+          "artifact=dist/$AppName.exe" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.build.outputs.artifact }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

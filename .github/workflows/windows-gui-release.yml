@@ -1,5 +1,8 @@
 name: build-and-release-gui
 
+permissions:
+  contents: write
+
 on:
   push:
     tags:
@@ -27,17 +30,22 @@ jobs:
         shell: pwsh
         run: |
           if (Test-Path 'icon.png') {
-            python - << 'PY'
-from PIL import Image; import sys
-src='icon.png'; dst='app.ico'
+            $py = @"
+from PIL import Image
+import sys
+src = r"icon.png"
+dst = r"app.ico"
 try:
-    img=Image.open(src).convert('RGBA')
-    sizes=[(16,16),(24,24),(32,32),(48,48),(64,64),(128,128),(256,256)]
-    imgs=[img.resize(s, Image.LANCZOS) for s in sizes]
+    img = Image.open(src).convert('RGBA')
+    sizes = [(16,16),(24,24),(32,32),(48,48),(64,64),(128,128),(256,256)]
+    imgs = [img.resize(s, Image.LANCZOS) for s in sizes]
     imgs[0].save(dst, format='ICO', sizes=sizes)
 except Exception as e:
     sys.stderr.write(str(e))
-PY
+"@
+            Set-Content -Path icon_convert.py -Value $py -Encoding UTF8
+            python icon_convert.py
+            Remove-Item -ErrorAction SilentlyContinue icon_convert.py
           }
 
       - name: Build EXE
@@ -45,9 +53,10 @@ PY
         shell: pwsh
         run: |
           $AppName = "学生信息管理系统GUI"
-          $iconArg = ""
-          if (Test-Path 'app.ico') { $iconArg = "--icon app.ico" }
-          python -m PyInstaller --noconfirm --onefile --clean $iconArg --hidden-import openpyxl --name "$AppName" desktop_app/gui_main.py
+          $args = @('-m','PyInstaller','--noconfirm','--onefile','--clean')
+          if (Test-Path 'app.ico') { $args += @('--icon','app.ico') }
+          $args += @('--hidden-import','openpyxl','--name', $AppName, 'desktop_app/gui_main.py')
+          python @args
           "artifact=dist/$AppName.exe" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Release

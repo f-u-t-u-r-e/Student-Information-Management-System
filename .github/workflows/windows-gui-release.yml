@@ -59,9 +59,25 @@ except Exception as e:
           python @args
           "artifact=dist/$AppName.exe" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
+      - name: Zip EXE for release
+        id: zip
+        shell: pwsh
+        run: |
+          $AppName = "学生信息管理系统GUI"
+          $zip = "dist/$AppName-$env:GITHUB_REF_NAME.zip"
+          if (Test-Path "dist/$AppName.exe") {
+            if (Test-Path $zip) { Remove-Item -Force $zip }
+            Compress-Archive -Path "dist/$AppName.exe" -DestinationPath $zip -Force
+            "artifact_zip=$zip" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          } else {
+            Write-Host "EXE not found, skip zip." -ForegroundColor Yellow
+          }
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: ${{ steps.build.outputs.artifact }}
+          files: |
+            ${{ steps.build.outputs.artifact }}
+            ${{ steps.zip.outputs.artifact_zip }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

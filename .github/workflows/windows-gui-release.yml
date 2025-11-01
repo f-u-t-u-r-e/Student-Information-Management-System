@@ -61,8 +61,6 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            ${{ steps.build.outputs.artifact }}
-            ${{ steps.zip.outputs.artifact_zip }}
+          files: ${{ steps.zip.outputs.artifact_zip }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

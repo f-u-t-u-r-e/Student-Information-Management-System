@@ -68,6 +68,8 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 提示：PyInstaller 只负责打包运行时；图标转换依赖 Pillow（脚本会按需安装）。
 
+## Tag v1.0.2里有exe程序文件，下载后解压即可使用
+
 ## 许可证
 
 本仓库已包含 MIT LICENSE，可自由使用、修改与再分发；请保留版权与许可声明。

@@ -68,24 +68,6 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 提示：PyInstaller 只负责打包运行时；图标转换依赖 Pillow（脚本会按需安装）。
 
-## GitHub 提交与隐私建议
-
-- 不要提交真实数据：`data/students.json` 已在 `.gitignore` 中忽略；上传示例数据 `data/sample_students.json` 即可
-- 不提交导出产物：`*.csv`、`*.xlsx`、`dist/`、`build/`、`*.exe`
-- 虚拟环境、日志、编辑器配置等均已忽略：`.venv/`、`*.log`、`.vscode/`、`.idea/`
-- 图标：如需要自定义图标，将 `icon.png`（确认有可再分发授权）放在仓库根目录；脚本会自动转换为 `app.ico`
-
-建议的提交内容：源代码、模板、示例数据、脚本与文档：
-
-- `desktop_app/`
-- `build_gui.ps1`
-- `requirements.txt`、`README.md`、`LICENSE`、`data/sample_students.json`
-
-发布建议（Release）：
-
-- 本地打包完成后，将 `dist/xxx.exe` 作为 Release 附件上传（不要直接提交到仓库）
-- 或者使用 GitHub Actions（Windows runner）构建并上传构建产物（Artifacts）
-
 ## 许可证
 
 本仓库已包含 MIT LICENSE，可自由使用、修改与再分发；请保留版权与许可声明。

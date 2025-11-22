@@ -1,0 +1,301 @@
+/* 全局样式 */
+QMainWindow {
+    background-color: #f5f6fa;
+}
+
+QWidget {
+    font-family: "Microsoft YaHei UI", "微软雅黑", Arial, sans-serif;
+    font-size: 9pt;
+    color: #2c3e50;  /* 默认深色文字 */
+}
+
+/* 确保所有标签使用深色文字 */
+QLabel {
+    color: #2c3e50;
+}
+
+/* 按钮样式 */
+QPushButton {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: #357abd;
+}
+
+QPushButton:pressed {
+    background-color: #2868a8;
+}
+
+QPushButton:disabled {
+    background-color: #bdc3c7;
+    color: #7f8c8d;
+}
+
+/* 主要操作按钮（绿色） */
+QPushButton#btn_add, QPushButton#btn_save {
+    background-color: #27ae60;
+}
+
+QPushButton#btn_add:hover, QPushButton#btn_save:hover {
+    background-color: #229954;
+}
+
+QPushButton#btn_add:pressed, QPushButton#btn_save:pressed {
+    background-color: #1e8449;
+}
+
+/* 危险操作按钮（红色） */
+QPushButton#btn_delete {
+    background-color: #e74c3c;
+}
+
+QPushButton#btn_delete:hover {
+    background-color: #c0392b;
+}
+
+QPushButton#btn_delete:pressed {
+    background-color: #a93226;
+}
+
+/* 导出按钮（紫色） */
+QPushButton#btn_export_csv, QPushButton#btn_export_xlsx {
+    background-color: #9b59b6;
+}
+
+QPushButton#btn_export_csv:hover, QPushButton#btn_export_xlsx:hover {
+    background-color: #8e44ad;
+}
+
+QPushButton#btn_export_csv:pressed, QPushButton#btn_export_xlsx:pressed {
+    background-color: #7d3c98;
+}
+
+/* 刷新按钮（灰色） */
+QPushButton#btn_reload {
+    background-color: #95a5a6;
+}
+
+QPushButton#btn_reload:hover {
+    background-color: #7f8c8d;
+}
+
+QPushButton#btn_reload:pressed {
+    background-color: #626567;
+}
+
+/* 表格样式 */
+QTableWidget {
+    background-color: white;
+    alternate-background-color: #f8f9fa;
+    border: 1px solid #dcdde1;
+    border-radius: 8px;
+    gridline-color: #ecf0f1;
+    selection-background-color: #3498db;
+    selection-color: white;
+    color: #2c3e50;  /* 表格文字深色 */
+}
+
+QTableWidget::item {
+    padding: 8px;
+    border: none;
+    color: #2c3e50;  /* 单元格文字深色 */
+}
+
+QTableWidget::item:selected {
+    background-color: #3498db;
+    color: white;  /* 选中时白色文字 */
+}
+
+QTableWidget::item:hover {
+    background-color: #e8f4f8;
+    color: #2c3e50;  /* 悬浮时深色文字 */
+}
+
+/* 表头样式 */
+QHeaderView::section {
+    background-color: #34495e;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-right: 1px solid #2c3e50;
+    font-weight: bold;
+}
+
+QHeaderView::section:hover {
+    background-color: #2c3e50;
+}
+
+QHeaderView::section:first {
+    border-top-left-radius: 8px;
+}
+
+QHeaderView::section:last {
+    border-top-right-radius: 8px;
+    border-right: none;
+}
+
+/* 滚动条样式 */
+QScrollBar:vertical {
+    background-color: #ecf0f1;
+    width: 12px;
+    border-radius: 6px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #95a5a6;
+    border-radius: 6px;
+    min-height: 30px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #7f8c8d;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+QScrollBar:horizontal {
+    background-color: #ecf0f1;
+    height: 12px;
+    border-radius: 6px;
+}
+
+QScrollBar::handle:horizontal {
+    background-color: #95a5a6;
+    border-radius: 6px;
+    min-width: 30px;
+}
+
+QScrollBar::handle:horizontal:hover {
+    background-color: #7f8c8d;
+}
+
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    width: 0px;
+}
+
+/* 状态标签 */
+QLabel#status_label {
+    color: #2c3e50;
+    background-color: white;
+    padding: 8px 12px;
+    border: 1px solid #dcdde1;
+    border-radius: 6px;
+    font-size: 9pt;
+}
+
+/* 对话框样式 */
+QDialog {
+    background-color: #f5f6fa;
+    color: #2c3e50;  /* 对话框文字深色 */
+}
+
+/* 对话框中的标签 */
+QDialog QLabel {
+    color: #2c3e50;
+}
+
+/* 输入框样式 */
+QLineEdit {
+    background-color: white;
+    border: 2px solid #dcdde1;
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: #2c3e50;
+}
+
+QLineEdit:focus {
+    border: 2px solid #4a90e2;
+}
+
+QLineEdit:disabled {
+    background-color: #ecf0f1;
+    color: #95a5a6;
+}
+
+/* 消息框样式 */
+QMessageBox {
+    background-color: #f5f6fa;
+    color: #2c3e50;  /* 消息框文字深色 */
+}
+
+QMessageBox QLabel {
+    color: #2c3e50;  /* 消息框标签深色 */
+}
+
+QMessageBox QPushButton {
+    min-width: 70px;
+    padding: 6px 16px;
+}
+
+/* 工具提示 */
+QToolTip {
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 9pt;
+}
+
+/* 菜单栏（如果有） */
+QMenuBar {
+    background-color: #34495e;
+    color: white;
+    padding: 4px;
+}
+
+QMenuBar::item {
+    background-color: transparent;
+    padding: 6px 12px;
+    color: white;  /* 菜单栏文字白色 */
+}
+
+QMenuBar::item:selected {
+    background-color: #2c3e50;
+    color: white;
+}
+
+QMenu {
+    background-color: white;
+    border: 1px solid #dcdde1;
+    color: #2c3e50;  /* 菜单项文字深色 */
+}
+
+QMenu::item {
+    padding: 6px 24px;
+    color: #2c3e50;  /* 菜单项文字深色 */
+}
+
+QMenu::item:selected {
+    background-color: #4a90e2;
+    color: white;  /* 选中时白色文字 */
+}
+
+/* 输入对话框样式 */
+QInputDialog {
+    background-color: #f5f6fa;
+    color: #2c3e50;
+}
+
+QInputDialog QLabel {
+    color: #2c3e50;
+}
+
+/* 文件对话框样式 */
+QFileDialog {
+    background-color: #f5f6fa;
+    color: #2c3e50;
+}
+
+QFileDialog QLabel {
+    color: #2c3e50;
+}
